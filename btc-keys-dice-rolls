@@ -86,3 +86,16 @@ def generate_address(private_key):
 
 address = generate_address(private_key)
 print("Bitcoin Address:", address)
+
+EXAMPLE
+	•	Dice Rolls:
+3, 6, 4, 1, 5, 2, 6, 3, 1, 4, 5, 2, 6, 4, 1, 3, 6, 5, 4, 2, 1, 3, 6, 5, 2, 4, 3, 1, 5, 6, 
+4, 2, 1, 3, 6, 4, 5, 2, 6, 1, 3, 4, 5, 6, 2, 1, 5, 3, 6, 4, 1, 2, 5, 6, 4, 3, 2, 1, 6, 5, 
+3, 4, 2, 1, 6, 5, 3, 2, 4, 1, 6, 3, 5, 4, 2, 1, 3, 6, 5, 2, 4, 3, 1, 6, 5, 4, 2, 1, 6, 3, 
+5
+	•	Hexadecimal Entropy:
+a3f9b8c4d6e7f8a9c2b3d4e5f6a7b8c9d1e2f3a4b5c6d7e8f9a1b2c3d4e5f6a7
+	•	Private Key (WIF):
+KxZcT1KUqS6HfFfh4iQs9YJgGrU3Xo5b4hRRUJf2FPtkMzf6G5jt
+	•	Bitcoin Address:
+1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
