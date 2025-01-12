@@ -1,0 +1,88 @@
+# Guide: Generating a Bitcoin Private Key Using Dice Rolls
+
+This guide explains how to securely generate a Bitcoin private key using dice rolls for entropy. It includes step-by-step instructions, tools/materials needed, and code snippets to convert the dice entropy into a valid private key format.
+
+---
+
+## Why Use Dice Rolls?
+Using dice rolls to generate entropy ensures randomness is derived from a physical source, avoiding potential vulnerabilities associated with software-based random number generators (RNGs).
+
+---
+
+## Materials and Tools Needed
+1. A six-sided dice (d6).
+2. Pen and paper (or a digital notepad) to record rolls.
+3. A computer with Python installed (to convert entropy into a private key).
+4. Access to offline Bitcoin tools (e.g., Bitaddress.org offline version or Python libraries).
+
+---
+
+## Step-by-Step Instructions
+
+### Step 1: Roll the Dice to Generate Entropy
+1. **Roll a six-sided dice 99 times.**
+   - Record each roll as a digit between 1 and 6.
+   - Example sequence: `3, 6, 4, 1, 5, ...`
+2. **Convert the sequence into a single string:**
+   - Example: `364156231...`
+3. **Map each dice roll (1-6) to a binary digit (0 or 1) if needed:**
+   - Example: Map `1, 2, 3 → 0` and `4, 5, 6 → 1`.
+   - Binary result: `0110110...`
+4. **Ensure you have 256 bits of entropy:**
+   - Each dice roll provides ~2.58 bits of entropy. For 256 bits, you’ll need about 99 rolls.
+
+---
+
+### Step 2: Convert Entropy to a Bitcoin Private Key
+1. **Combine the rolls into a hexadecimal number.**
+   - Example (for simplicity, using fewer rolls):  
+     Rolls: `3, 6, 4, 1, 5, 2 → Binary: 011101 → Hex: 3D.`
+2. **Ensure the final entropy value is 64 characters long in hexadecimal (256 bits).**
+   - Example: `a3f9b8c4d6e7f8a9c2b3d4e5f6a7b8c9d1e2f3a4b5c6d7e8f9a1b2c3d4e5f6a7`
+3. **Use Python to confirm the private key is valid:**
+   - A valid private key must be within the range:  
+     `1 ≤ Private Key < 2^256`
+
+---
+
+### Step 3: Generate the Bitcoin Address
+1. **Derive the public key from the private key using elliptic curve multiplication.**
+2. **Encode the public key into the corresponding Bitcoin address format:**
+   - For mainnet: P2PKH starts with `1`, P2WPKH starts with `bc1`.
+   - For testnet: P2PKH starts with `m` or `n`, P2WPKH starts with `tb1`.
+
+---
+
+## Code Snippet
+
+```python
+import hashlib
+from ecdsa import SigningKey, SECP256k1
+
+# Example: Dice rolls converted to a single string of digits
+dice_rolls = "364156231464523..."
+
+# Step 1: Convert dice rolls to binary or hexadecimal
+hex_entropy = hex(int(dice_rolls))[:66]  # Convert to hex and ensure 64 chars
+print("Hexadecimal Entropy:", hex_entropy)
+
+# Step 2: Validate the private key range
+private_key = int(hex_entropy, 16)  # Convert hex to an integer
+if 1 <= private_key < 2**256:
+    print("Valid private key:", hex(private_key))
+else:
+    print("Invalid private key")
+
+# Step 3: Generate a Bitcoin address from the private key
+def generate_address(private_key):
+    # Derive public key using ecdsa
+    sk = SigningKey.from_string(private_key.to_bytes(32, 'big'), curve=SECP256k1)
+    public_key = sk.verifying_key.to_string("compressed").hex()
+
+    # Generate Bitcoin address (simplified P2PKH example)
+    hashed = hashlib.sha256(bytes.fromhex(public_key)).digest()
+    ripemd160 = hashlib.new('ripemd160', hashed).digest()
+    return "1" + ripemd160.hex()  # Add network prefix (mainnet)
+
+address = generate_address(private_key)
+print("Bitcoin Address:", address)
